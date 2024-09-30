@@ -4,6 +4,7 @@ from models.model import Recipe
 from service.recipe_services import ( 
     create_recipe_service,
     get_recipe_service,
+    get_all_recipe_service,
     update_recipe_service,
     delete_recipe_service
 
@@ -21,6 +22,13 @@ def create_recipe(recipe: Recipe):
 @recipe_router.get("/", response_model=Union[dict, List[Recipe]])
 def get_recipe(recipe_id: int):
     result = get_recipe_service(recipe_id)
+    if isinstance(result, dict) and "message" in result:
+        raise HTTPException(status_code=404, detail=result["message"])
+    return result
+
+@recipe_router.get("/all", response_model=Union[dict, List[Recipe]])
+def get_all_recipe():
+    result = get_all_recipe_service()
     if isinstance(result, dict) and "message" in result:
         raise HTTPException(status_code=404, detail=result["message"])
     return result

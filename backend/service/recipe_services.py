@@ -55,6 +55,20 @@ def get_recipe_service(recipe_id: int = None) -> Union[dict, List[dict]]:
     except Exception as e:
         print("Error retrieving recipe:", e)
         return {"message": "Error retrieving recipe", "error": str(e)}
+    
+
+def get_all_recipe_service( ) -> Union[dict, List[dict]]:
+    try:
+        response = supabase.from_("recipes").select("*").execute()
+        if response.data is not None and response.data:
+            return response.data
+        else:
+            return {"message": "Recipe not found"}
+
+    except Exception as e:
+        print("Error retrieving recipe:", e)
+        return {"message": "Error retrieving recipe", "error": str(e)}
+
 
 def update_recipe_service(recipe_id: str, updated_fields: dict) -> dict:
     try:

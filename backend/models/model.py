@@ -10,3 +10,4 @@ class Recipe(BaseModel):
     instructions: str  
     createdAt: datetime
     userid: int  
+
