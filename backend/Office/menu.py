@@ -25,6 +25,7 @@ logger.info(f"Connecting to Supabase with URL: {SUPABASE_URL}")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
+# Get Menu Items based on Organization Id
 @app.get("/Menu/{org_id}")
 def get_digital_menu(org_id: str):
     logger.info(f"Fetching Digital Menu for workspace: {org_id}")
@@ -39,7 +40,7 @@ def get_digital_menu(org_id: str):
         logger.error(f"Error fetching digital menu: {e}")
         raise HTTPException(status_code=400, detail=str(e))
 
-
+# Creating Menu Item into Menu Table
 @app.post("/Menu/create-menu-item")
 def create_menu_item(menu_item: dict):
     logger.info(f"Create Menu Item to the workspace: {menu_item}")
@@ -51,6 +52,7 @@ def create_menu_item(menu_item: dict):
         logger.error(f"Error creating Menu Item: {e}")
         raise HTTPException(status_code=400, detail=str(e))
 
+# Updating Menu Item based on Menu Id ( Updating updated_at )
 @app.put("/Menu/update-menu-item/{menu_id}")
 def update_menu_item(menu_id: str, menu_items: dict):
     
@@ -63,7 +65,8 @@ def update_menu_item(menu_id: str, menu_items: dict):
     except Exception as e:
         logger.error(f"Error updating Menu Item: {e}")
         raise HTTPException(status_code=400, detail=str(e))
-    
+
+# Updating Menu Item Status based on Menu Id ( Toggle Switch )    
 @app.put("/Menu/update-menu-status/{menu_id}")
 def update_menu_status(menu_id: str, IsAvailable: str):
     logger.info(f"Updating Menu Status: {menu_id}")
@@ -75,6 +78,7 @@ def update_menu_status(menu_id: str, IsAvailable: str):
         logger.error(f"Error updating Menu Status: {e}")
         raise HTTPException(status_code=400, detail=str(e))
 
+# Deleting the Menu item from Menu Table using Menu_id
 @app.delete("/Menu/delete-menu-item/{menu_id}")
 def delete_menu_item(menu_id: str):
     logger.info(f"Deleting Menu Item: {menu_id}")
@@ -88,3 +92,27 @@ def delete_menu_item(menu_id: str):
     
 
 # CRUD operations for category's ( Create, Update)
+
+# Creating new category item in category table
+@app.post("/categories/create-category")
+def create_category_item(category_item: dict):
+    logger.info(f"Create Menu Item to the workspace: {category_item}")
+    try:
+        response = supabase.table("categories").insert(category_item).execute()
+        logger.info(f"category Item added to the workspace: {response.data}")
+        return response.data
+    except Exception as e:
+        logger.error(f"Error creating Category Item {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+# Updating the Category table based on id
+@app.put("/categories/update-category/{category_id}")
+def update_menu_status(category_id: str, category_items: dict):
+    logger.info(f"Updating category Item: {category_id}")
+    try:
+        response = supabase.table("categories").update(category_items).eq("id",category_id).execute()
+        logger.info(f"category Item Updated: {response.data}")
+        return response.data
+    except Exception as e:
+        logger.error(f"Error updating category item: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
